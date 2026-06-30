@@ -1,0 +1,103 @@
+---
+title: Meridian Coffee Roasters — Wholesale Operations
+slug: meridian-coffee-ops
+tagline: A live, role-based ops tool that replaces a roastery's shared spreadsheet and group text with one real-time source of truth — access enforced in Postgres, not just hidden in the UI.
+status: live
+tags: [internal-tool, dashboard, realtime, saas]
+client: Self-initiated
+timeframe: 2026
+role: "Solo — product thinking, UX/UI, data modeling, the full-stack build, and deploy. The call I'd want a peer to notice is the security model: one Postgres function resolves roles, and the SAME RLS policies gate every write in both the keyless demo and a real JWT-backed deployment."
+problem: Meridian roasts coffee and wholesales bagged beans to ~40 cafés, restaurants, and offices. The entire wholesale operation ran on one shared spreadsheet and a group text — so standing orders got missed, roasts were scheduled wrong, deliveries went out short, and the owner had no daily read on cash. The brief — kill the spreadsheet, surface cash position daily, and put production and delivery on the same live data.
+approach: A role-based internal dashboard with three seats working off shared real-time data — Owner (revenue, cash-in vs. outstanding, low-stock alerts, the full order book), Production (a roast-queue board, Queued → Roasting → Done), and Delivery (today's route-ordered manifest as a checklist). When production marks a batch roasted, a database trigger replenishes stock and advances every linked order, and it surfaces on the delivery manifest and the owner's dashboard within a second — no refresh, no business logic duplicated in the UI.
+outcome: One live source of truth where there used to be a spreadsheet and a group text. Roles resolve through a single Postgres function and the same Row-Level-Security policies enforce every write — proven with rejection tests, so delivery literally cannot touch the roast board and production cannot create orders. Seeded with ~40 accounts so it's alive on first load, installable as a PWA, and a "Simulate a day" control drives orders through a realistic day across all three views in real time — through the exact same RLS-gated paths a human uses.
+stack: [Next.js 14, TypeScript, Tailwind CSS, Supabase, PostgreSQL, Realtime, Row-Level Security, Vercel, PWA]
+demoUrl: https://meridian-coffee-ops.vercel.app
+repoUrl: https://github.com/gabrielbrathwaite/meridian-coffee-ops
+demoNote: Opens on the Owner view — switch seats with the Owner / Production / Delivery tabs (or keys 1 / 2 / 3) and hit "Run day" to watch a simulated day flow across all three views live. The demo runs fully keyless — roles resolve from a request header instead of a verified JWT, but the SAME row-level-security policies gate every write, with no service-role key and no special powers. Best viewed on desktop.
+embed: iframe
+gallery:
+  - /projects/meridian/hero.png
+  - /projects/meridian/owner.png
+  - /projects/meridian/production.png
+  - /projects/meridian/delivery.png
+  - /projects/meridian/mobile-dark.png
+featured: true
+order: 0
+---
+
+## Killing the spreadsheet — a live ops tool for a coffee roastery
+
+Three roles, one real-time source of truth, with access enforced in the
+database — not just hidden in the UI.
+
+Meridian roasts coffee and wholesales bagged beans to ~40 cafés, restaurants,
+and offices. The entire wholesale operation ran on **one shared spreadsheet and
+a group text**. So standing orders got missed, roasts were scheduled against
+stale numbers, deliveries went out short, and the owner had no daily read on
+cash. The brief was blunt: kill the spreadsheet, surface cash position every
+morning, and get production and delivery onto the same live data.
+
+## What I built
+
+A role-based internal dashboard with **three seats working off shared, real-time
+data**.
+
+**Owner** — revenue, cash-in vs. outstanding, low-stock alerts, and the full
+order book on one screen. The number the owner never had: how much money is
+actually in vs. still owed, today.
+
+![Meridian Owner view — revenue, cash-in vs. outstanding, low-stock alerts, and the full order book, light mode](/projects/meridian/owner.png)
+
+**Production** — a roast-queue board that moves batches **Queued → Roasting →
+Done**. No spreadsheet rows, no guessing what to roast next.
+
+![Meridian Production view — the roast-queue board moving batches from Queued to Roasting to Done](/projects/meridian/production.png)
+
+**Delivery** — today's manifest, **route-ordered, as a checklist**. Mark each
+stop delivered and it clears.
+
+![Meridian Delivery view — today's route-ordered delivery manifest as a checklist](/projects/meridian/delivery.png)
+
+When production marks a batch roasted, it appears on the delivery manifest and
+the owner's dashboard **within a second, no refresh**.
+
+## Three things I'm proud of
+
+**Real Row-Level Security — the same policies in the demo and in production.**
+Roles resolve through one Postgres function that reads a verified JWT claim in
+production, or a request header in the keyless demo — and the *same* policies
+enforce both. Every write is gated to the single role allowed to make it, proven
+with rejection tests: delivery literally cannot touch the roast board;
+production cannot create orders. Security lives in the database, not in a
+hopeful `if` in the UI.
+
+**Live cross-role updates, with the cascade in the database.** Supabase Realtime
+pushes changes to every open seat, and database triggers turn one action into
+the right chain of effects — a finished batch replenishes stock and advances
+every linked order — so there's **no business logic duplicated in the UI**. One
+action, one source of truth, three views that all agree.
+
+**A "Simulate a day" control that's honest.** Hit *Run day* and orders flow
+through a realistic day — new orders drop in, batches roast, orders dispatch,
+deliveries complete — cascading across all three views in real time. Crucially,
+it drives the app through **the exact same RLS-gated paths a human uses**: no
+service-role key, no special powers. It's a live demo that can't cheat, which is
+the whole point.
+
+## Craft details
+
+Seeded with **~40 accounts** so it's alive on first load — not an empty shell
+you have to imagine in use. A warm, editorial brand identity sits over a dense,
+keyboard-friendly back-office UI (Owner / Production / Delivery on keys 1 / 2 /
+3). Dark mode is **system-driven**, it's responsive from phone to desktop, and
+it's **installable as a PWA**.
+
+![Meridian on mobile in dark mode — the dashboard adapted to a phone-sized, installable PWA view](/projects/meridian/mobile-dark.png)
+
+## What it demonstrates
+
+I can model a real operation end-to-end — **schema, security, realtime, and a UI
+that's a pleasure to use** — not just CRUD. The interesting work wasn't drawing
+three dashboards; it was deciding that access control belongs in the database,
+designing a demo that proves it without weakening it, and making the whole thing
+honest enough to hand to a prospect with nothing to log into.
