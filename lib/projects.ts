@@ -41,6 +41,11 @@ export const ProjectSchema = z.object({
   stack: z.array(z.string()),
   demoUrl: z.string().url().nullable(),
   repoUrl: z.string().url().nullable(),
+  // Optional internal override for where the /work card links. Defaults to the
+  // standard /work/<slug> case-study page; set this when a project has a
+  // dedicated in-app experience (e.g. a live interactive demo route) that
+  // should be the card's destination instead.
+  cardHref: z.string().optional(),
   // Optional honest caption shown under a live (iframe) demo — e.g. "this is an
   // anonymized, no-login version with sample data".
   demoNote: z.string().optional(),

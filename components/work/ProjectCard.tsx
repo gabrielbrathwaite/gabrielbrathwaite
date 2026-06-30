@@ -11,9 +11,12 @@ import type { Project } from "@/lib/projects";
 export function ProjectCard({ project }: { project: Project }) {
   // Cover = the first real gallery image, or nothing (→ placeholder, no 404).
   const cover = project.gallery[0];
+  // A project can override where its card links (e.g. a live interactive demo)
+  // — otherwise it goes to the standard /work case-study page.
+  const href = project.cardHref ?? `/work/${project.slug}`;
 
   return (
-    <Card href={`/work/${project.slug}`} className="group overflow-hidden">
+    <Card href={href} className="group overflow-hidden">
       <div className="p-3">
         <ProjectImage
           src={cover}
