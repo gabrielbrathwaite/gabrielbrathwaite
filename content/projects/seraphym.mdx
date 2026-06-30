@@ -1,0 +1,46 @@
+---
+title: Seraphym HQ
+slug: seraphym
+tagline: A gated internal dashboard — rebuilt as a safe, anonymized demo anyone can explore.
+status: live
+tags: [dashboard, internal-tool, saas]
+client: Self-initiated
+timeframe: 2026
+role: Product design, full-stack build, and the de-risked public demo — end to end.
+problem: I built Seraphym HQ to run a large online community from one screen — moderation, support, a member economy, analytics, and logs, all on a gated Next.js app with Discord OAuth and a Supabase backend. It worked, but it could never be shown. Every screen was wired to real auth, real accounts, and real data, so there was no way to let a prospective client or a peer actually click through the thing I'd built.
+approach: So I built Aurora — the same dashboard, made safe to share. I stripped out the auth, Discord, and Supabase layers entirely and replaced them with a seeded, deterministic sample-data engine, so the UI looks fully alive — populated charts, members, mod cases, leaderboards, tickets, logs — without a database or a login behind it. It auto-enters as a demo user with sample numbers that are randomized but stable, so anyone can explore every page freely and nothing real is ever exposed.
+outcome: The result is a live, fully-explorable version of a tool that used to be invisible. The production app still runs gated on real data; this demo is the honest, anonymized twin — proof of the real thing that I can actually put in front of someone. Click into it below.
+stack: [Next.js, TypeScript, Tailwind CSS, Recharts, Vercel]
+demoUrl: https://aurora-dashboard-indol.vercel.app
+repoUrl: null
+demoNote: This embedded demo (“Aurora”) is the anonymized, no-login version — all Discord, OAuth, and Supabase removed, every figure generated from a seeded sample-data layer so it looks alive without a backend. The production tool is gated and runs on real data.
+embed: iframe
+# Screenshots double as the mobile + blocked-frame fallback. Captured from the
+# live Aurora demo. Add more to public/projects/seraphym/ and list them here.
+gallery:
+  - /projects/seraphym/overview.png
+  - /projects/seraphym/analytics.png
+  - /projects/seraphym/livechat.png
+  - /projects/seraphym/economy.png
+featured: true
+order: 1
+---
+
+## What's inside
+
+The demo carries the full surface of the real tool: an **Overview** of KPIs and
+engagement, a deep **Analytics** view (drilldowns, radar, heatmaps, top tables),
+**Members**, a **Mod Log** and **Server Logs**, **Live Chat**, the **Halo
+Points** economy, **Karma**, **Giveaways**, a **Staff Hub**, and an **Admin
+Storage** vault. Every one of them renders from sample data.
+
+## The interesting part
+
+The real work wasn't the UI — it was making a gated, stateful product safe to
+hand to a stranger. That meant cleanly severing the app from its identity
+(Discord OAuth), its database (Supabase), and its real users, then building a
+**seeded deterministic data layer** that fabricates a believable community on
+every load: numbers that move, charts that fill in, names and cases and logs
+that read as real but aren't. The auth became a one-line demo shim; the database
+became `lib/demoData.ts`. The product looks exactly as capable as it is — with
+none of the risk of showing it.

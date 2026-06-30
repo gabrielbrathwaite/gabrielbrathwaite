@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * ─────────────────────────────────────────────────────────────────────
+ *  COLOR TOKENS  (values are space-separated RGB channels, see tailwind.config)
+ * ─────────────────────────────────────────────────────────────────────
+ *  Warm editorial neutrals + a single ember accent. Light is the default;
+ *  `.dark` (set by next-themes on <html>) overrides. Contrast meets WCAG AA.
+ */
+:root {
+  --bg: 251 250 247; /* warm paper */
+  --surface: 255 255 255;
+  --surface-2: 245 243 238;
+  --border: 230 226 217;
+  --ink: 23 21 15; /* near-black warm */
+  --muted: 92 87 76;
+  --faint: 107 102 87; /* darkened to meet WCAG AA (4.5:1) on paper */
+  --accent: 200 60 22; /* ember — AA on paper */
+  --accent-ink: 255 255 255; /* text on accent */
+}
+
+.dark {
+  --bg: 12 11 10; /* warm near-black */
+  --surface: 20 19 16;
+  --surface-2: 29 27 22;
+  --border: 42 39 34;
+  --ink: 245 242 234;
+  --muted: 173 168 155;
+  --faint: 146 141 130; /* lightened to meet WCAG AA (4.5:1) on near-black */
+  --accent: 255 106 61; /* brighter ember for dark */
+  --accent-ink: 18 12 8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--ink));
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.22);
+}
+
+/* Visible, on-theme focus ring for keyboard users (accessibility). */
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Respect reduced-motion globally; individual components also check it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
