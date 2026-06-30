@@ -11,7 +11,7 @@ problem: I built Seraphym HQ to run a large online community from one screen —
 approach: So I built Aurora — the same dashboard, made safe to share. I stripped out the auth, Discord, and Supabase layers entirely and replaced them with a seeded, deterministic sample-data engine, so the UI looks fully alive — populated charts, members, mod cases, leaderboards, tickets, logs — without a database or a login behind it. It auto-enters as a demo user with sample numbers that are randomized but stable, so anyone can explore every page freely and nothing real is ever exposed.
 outcome: The result is a live, fully-explorable version of a tool that used to be invisible. The production app still runs gated on real data; this demo is the honest, anonymized twin — proof of the real thing that I can actually put in front of someone. Click into it below.
 stack: [Next.js, TypeScript, Tailwind CSS, Recharts, Vercel]
-demoUrl: https://aurora-dashboard-indol.vercel.app
+demoUrl: https://aurora.gabrielbrathwaite.org
 repoUrl: null
 demoNote: This embedded demo (“Aurora”) is the anonymized, no-login version — all Discord, OAuth, and Supabase removed, every figure generated from a seeded sample-data layer so it looks alive without a backend. The production tool is gated and runs on real data.
 embed: iframe
