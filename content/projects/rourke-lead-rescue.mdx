@@ -11,7 +11,7 @@ problem: A 4-truck plumbing shop misses ~30% of inbound calls — crews are unde
 approach: I built the loop that closes it. A missed call triggers an AI text-back in ~12 seconds; a conversational SMS intake gathers the details; an AI rules engine classifies job type and urgency and extracts structured fields; emergencies escalate straight to the owner's phone, routine jobs get offered a booking slot, and every conversation becomes a triaged card on a live pipeline. One number sits on top of it all — rescued revenue this week.
 outcome: A mobile-first product that turns the shop's biggest leak into recovered revenue, and ships with a deliberate engineering twist — it runs and deploys with zero external keys. The AI, SMS, and database layers each ship a deterministic mock behind the same interface as the real thing, so the entire loop is explorable in front of a prospect with nothing to sign up for, and graduates to OpenAI / Twilio / Supabase one env var at a time.
 stack: [Next.js, TypeScript, Tailwind CSS, Supabase, Vercel]
-demoUrl: https://rourke-lead-rescue.vercel.app/pipeline
+demoUrl: https://rourke.gabrielbrathwaite.org/pipeline
 repoUrl: https://github.com/gabrielbrathwaite/rourke-lead-rescue
 demoNote: The live demo runs fully keyless — the AI is a deterministic rules engine, SMS is simulated in the phone panel, and "realtime" is an in-browser store (localStorage + BroadcastChannel). The board is seeded with a week of sample leads. Set env vars to swap any layer to OpenAI, Twilio, or Supabase without touching the UI.
 embed: iframe
