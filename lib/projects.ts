@@ -29,7 +29,7 @@ export const ProjectSchema = z.object({
   title: z.string(),
   slug: z.string(),
   tagline: z.string(), // one line, outcome-focused
-  status: z.enum(["live", "case-study", "wip"]),
+  status: z.enum(["live", "demo", "case-study", "wip"]),
   tags: z.array(z.string()), // for filtering
   client: z.string().nullable(), // or "Personal" / "Self-initiated"
   // Coerce so an unquoted year in YAML (parsed as a number) is accepted.

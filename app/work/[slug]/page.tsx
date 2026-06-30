@@ -96,7 +96,10 @@ export default async function ProjectPage({
         {/* Hero. */}
         <header className="mt-6 max-w-3xl">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge tone={project.status} withDot={project.status === "live"} />
+            <Badge
+              tone={project.status}
+              withDot={project.status === "live" || project.status === "demo"}
+            />
             {project.client && (
               <span className="font-mono text-xs text-faint">
                 {project.client} · {project.timeframe}

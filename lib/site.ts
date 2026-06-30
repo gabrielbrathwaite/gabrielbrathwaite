@@ -24,6 +24,9 @@ export const nav = [
 // External / social links shown in the footer.
 export const socials = [
   { label: "Email", href: "mailto:gabembrathwaite@gmail.com" },
-  { label: "GitHub", href: "https://github.com/" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/" },
+  { label: "GitHub", href: "https://github.com/gabrielbrathwaite" },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/gabriel-brathwaite-939a86392",
+  },
 ] as const;

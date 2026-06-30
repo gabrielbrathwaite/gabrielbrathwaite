@@ -27,7 +27,10 @@ export function ProjectCard({ project }: { project: Project }) {
       </div>
       <div className="px-5 pb-5 pt-1">
         <div className="flex items-center gap-2">
-          <Badge tone={project.status} withDot={project.status === "live"} />
+          <Badge
+            tone={project.status}
+            withDot={project.status === "live" || project.status === "demo"}
+          />
           <span className="font-mono text-xs text-faint">
             {project.timeframe}
           </span>

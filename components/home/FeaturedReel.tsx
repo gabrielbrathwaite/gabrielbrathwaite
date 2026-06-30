@@ -141,7 +141,10 @@ function FeaturedCard({
       {/* Caption. */}
       <div className="p-5">
         <div className="flex items-center gap-2">
-          <Badge tone={project.status} withDot={project.status === "live"} />
+          <Badge
+            tone={project.status}
+            withDot={project.status === "live" || project.status === "demo"}
+          />
           <span className="font-mono text-xs text-faint">
             {project.tags[0]}
           </span>
