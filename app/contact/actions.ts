@@ -163,7 +163,7 @@ async function notify(data: z.infer<typeof Schema>) {
     data.message && `Message: ${data.message}`,
   ].filter(Boolean);
 
-  await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -177,4 +177,11 @@ async function notify(data: z.infer<typeof Schema>) {
       text: lines.join("\n"),
     }),
   });
+
+  // fetch only rejects on network errors, not HTTP 4xx/5xx — so surface Resend
+  // API errors (e.g. unverified sender, bad key) instead of failing silently.
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Resend ${res.status}: ${body}`);
+  }
 }
