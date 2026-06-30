@@ -1,0 +1,121 @@
+---
+title: Rourke Lead Rescue
+slug: rourke-lead-rescue
+tagline: A missed call is a $400–$1,500 job walking to the next plumber. This closes the hole — and recovers ~$7,600/week.
+status: live
+tags: [automation, ai, saas]
+client: Self-initiated
+timeframe: 2026
+role: Product, full-stack build, and the architecture call that let it ship — the swappable data layer that reconciles "Supabase-backed" with "deploys with zero keys."
+problem: A 4-truck plumbing shop misses ~30% of inbound calls — crews are under sinks, not by the phone. Of ~80 calls a week, ~24 go unanswered; ~17 of those are real jobs at ~$450 each. That's roughly $7,600 a week dialing the next plumber on Google before the owner even knows they called. The phone is the top of the funnel, and the funnel has a hole in it.
+approach: I built the loop that closes it. A missed call triggers an AI text-back in ~12 seconds; a conversational SMS intake gathers the details; an AI rules engine classifies job type and urgency and extracts structured fields; emergencies escalate straight to the owner's phone, routine jobs get offered a booking slot, and every conversation becomes a triaged card on a live pipeline. One number sits on top of it all — rescued revenue this week.
+outcome: A mobile-first product that turns the shop's biggest leak into recovered revenue, and ships with a deliberate engineering twist — it runs and deploys with zero external keys. The AI, SMS, and database layers each ship a deterministic mock behind the same interface as the real thing, so the entire loop is explorable in front of a prospect with nothing to sign up for, and graduates to OpenAI / Twilio / Supabase one env var at a time.
+stack: [Next.js, TypeScript, Tailwind CSS, Supabase, Vercel]
+demoUrl: https://rourke-lead-rescue.vercel.app/pipeline
+repoUrl: null
+demoNote: The live demo runs fully keyless — the AI is a deterministic rules engine, SMS is simulated in the phone panel, and "realtime" is an in-browser store (localStorage + BroadcastChannel). The board is seeded with a week of sample leads. Set env vars to swap any layer to OpenAI, Twilio, or Supabase without touching the UI.
+embed: iframe
+gallery:
+  - /projects/rourke-lead-rescue/pipeline-light.png
+  - /projects/rourke-lead-rescue/console-light.png
+  - /projects/rourke-lead-rescue/lead-light.png
+featured: true
+order: 2
+---
+
+## The problem, quantified
+
+Rourke Plumbing & Drain is a realistic stand-in for the kind of small operator I
+build for — a four-truck shop run from the cab of a truck, no CRM, leads living in
+a paper notebook. The math is brutal and typical:
+
+| | |
+| --- | --- |
+| Inbound calls / week | ~80 |
+| Missed (crew on a job) | ~30% → **24 calls** |
+| Of those, real jobs | ~70% → **~17 jobs** |
+| Average job value | **~$450** |
+| **Revenue leaking out the back / week** | **≈ $7,600** |
+
+Every missed caller dials the next plumber before the shop ever knows they rang.
+
+## Before / after
+
+| | Before | After |
+| --- | --- | --- |
+| Missed call | voicemail, deleted unheard | **AI texts back in ~12s** |
+| Triage | none | job type + urgency, automatic |
+| Emergencies | found out hours later | **escalated to the owner in seconds** |
+| Routine jobs | lost | **booking slot offered on the spot** |
+| Record | paper notebook | live pipeline card + full transcript |
+| Response time | **never** | **~12 seconds** |
+
+The product sells one number — *rescued revenue this week* — and everything else
+exists to push it up.
+
+## What I built
+
+Four screens, mobile-first, alive on first load with a seeded week of leads.
+
+**The pipeline** — a Kanban board (New → Qualified → Booked → Won) with a metrics
+strip on top: leads rescued, estimated rescued value, average response time vs.
+*never*, and active emergencies. Emergencies are flagged red and pinned; spam is
+auto-filtered into a tray.
+
+![Rourke Lead Rescue pipeline board with the rescued-revenue metrics strip, light mode](/projects/rourke-lead-rescue/pipeline-light.png)
+
+**The demo console** — hit *Simulate inbound missed call* and watch the whole loop
+run live in an iMessage-style phone simulator: the AI texts back, the customer
+replies, the job gets classified, and within seconds a triaged card lands on the
+board. Here it is catching a burst-pipe emergency and escalating it:
+
+![The demo console's phone simulator mid-conversation, dark mode](/projects/rourke-lead-rescue/console-dark.png)
+
+**The lead detail** — the full transcript, the structured fields the AI pulled out
+of the customer's words, and the two actions that matter: *Book this slot* and
+*Escalate to the owner*.
+
+![Lead detail with transcript, extracted fields, and actions, dark mode](/projects/rourke-lead-rescue/lead-dark.png)
+
+Dark mode is automatic — a CSS-variable flip on `prefers-color-scheme`, no flash —
+and the whole thing is an installable PWA.
+
+## The architecture — and the decision behind it
+
+The interesting constraint was self-imposed: I wanted a **Supabase-backed,
+realtime** product that anyone could **deploy and explore with zero keys**. Those
+two goals fight each other. I resolved it by making the backend a seam, not an
+assumption.
+
+```
+                    ┌──────── React store (loads a snapshot, subscribes,
+                    │         exposes actions) ────────┐
+                    │              │                   │
+              AIProvider      SMSProvider          DataProvider
+          ┌──────┴──────┐  ┌──────┴──────┐    ┌────────┴────────┐
+          │ mock (rules)│  │ mock (→ UI) │    │ local (browser) │ ← default, zero keys
+          │ openai      │  │ twilio      │    │ supabase (PG+RT)│ ← set env to enable
+          └─────────────┘  └─────────────┘    └─────────────────┘
+```
+
+Three clean interfaces — `AIProvider`, `SMSProvider`, `DataProvider` — each with a
+deterministic mock **and** a real implementation behind the identical shape:
+
+- **AI** isn't a stub — it's a small rules engine that classifies job type and
+  urgency from an ordered keyword table (sewage/burst → emergency, no-hot-water →
+  urgent, clog/leak → routine, solicitation → spam), extracts address and onset by
+  regex, and composes the next turn-aware SMS. Same transcript in, same JSON out —
+  so the demo is reproducible in front of a prospect.
+- **Data** defaults to an in-browser store; *realtime* is `localStorage` +
+  `BroadcastChannel`, so triggering a simulation in one tab animates a card onto the
+  board in another. Wire up Supabase and the same store subscribes to
+  `postgres_changes` instead — the UI never knows the difference.
+- **SMS** writes to the phone simulator by default; the real path is Twilio.
+
+The intake orchestration is a pure function with every side effect injected, so it
+reads like the product spec: create the lead, text back, gather info, classify,
+then escalate or book.
+
+That's the senior call I'd want a peer to notice: not "I used Supabase," but
+"I designed the boundary so the product is honest to demo *and* one env var from
+production."

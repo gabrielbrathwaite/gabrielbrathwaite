@@ -12,11 +12,19 @@ import {
   getProject,
   getProjectNeighbours,
 } from "@/lib/projects";
+import { site } from "@/lib/site";
 
 /*
  * /work/[slug] — ONE template, driven entirely by frontmatter. Adding a project
  * never touches this file. Statically generated for every project at build.
  */
+
+// Render the optional Markdown body: GFM tables on, and every body image gets
+// lazy-loading + async decoding for performance.
+function renderBody(md: string): string {
+  const html = marked.parse(md, { gfm: true, async: false }) as string;
+  return html.replace(/<img /g, '<img loading="lazy" decoding="async" ');
+}
 
 // Pre-render a static page per project.
 export function generateStaticParams() {
@@ -32,10 +40,17 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) return {};
+  const url = `${site.url.replace(/\/$/, "")}/work/${project.slug}`;
   return {
     title: project.title,
     description: project.tagline,
-    openGraph: { title: project.title, description: project.tagline },
+    alternates: { canonical: url },
+    openGraph: {
+      title: project.title,
+      description: project.tagline,
+      url,
+      type: "article",
+    },
   };
 }
 
@@ -50,8 +65,25 @@ export default async function ProjectPage({
 
   const { prev, next } = getProjectNeighbours(slug);
 
+  // Structured data so the case study is machine-readable for search/social.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    headline: project.tagline,
+    url: `${site.url.replace(/\/$/, "")}/work/${project.slug}`,
+    ...(project.demoUrl ? { sameAs: [project.demoUrl] } : {}),
+    author: { "@type": "Person", name: site.name, url: site.url },
+    keywords: project.tags.join(", "),
+    dateCreated: project.timeframe,
+  };
+
   return (
     <article className="py-12 sm:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Container>
         {/* Back link. */}
         <Link
@@ -115,9 +147,7 @@ export default async function ProjectPage({
               <div className="border-t border-border pt-8">
                 <Prose>
                   <div
-                    dangerouslySetInnerHTML={{
-                      __html: marked.parse(project.body) as string,
-                    }}
+                    dangerouslySetInnerHTML={{ __html: renderBody(project.body) }}
                   />
                 </Prose>
               </div>

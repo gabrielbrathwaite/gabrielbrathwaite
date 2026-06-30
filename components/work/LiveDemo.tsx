@@ -80,7 +80,7 @@ function IframeDemo({ project }: { project: Project }) {
     if (!active) return;
     const t = setTimeout(() => {
       if (!loadedRef.current) setBlocked(true);
-    }, 4000);
+    }, 8000);
     return () => clearTimeout(t);
   }, [active]);
 
