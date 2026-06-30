@@ -1,25 +1,50 @@
 ---
 title: Ops Dashboard Demo
 slug: sample-dashboard
-tagline: "[PLACEHOLDER] A live operations dashboard small teams actually check every morning."
+tagline: "A real-time operations dashboard for a small coffee roastery — the one screen the owner checks with their morning coffee to see what changed overnight and what needs them today."
 status: live
 tags: [dashboard, internal-tool]
-client: Sample Client
+client: Self-initiated
 timeframe: 2026
-role: Full-stack build.
-problem: "[PLACEHOLDER ENTRY — replace or delete this file.] Leadership had the data but no single, glanceable view of how the business was doing today."
-approach: "A focused dashboard surfacing the handful of numbers that actually drive decisions, refreshed live, with drill-downs where they matter and nothing where they don't."
-outcome: "Replace with a real result and a number once this ships."
-stack: [Next.js, TypeScript, Supabase, Tailwind CSS]
-demoUrl: null
+role: Full-stack build — Supabase data model, a live event stream, and a server-computed “morning briefing” that turns raw rows into plain-English callouts.
+problem: "A small business owner has all the data — orders, stock, support tickets — scattered across tools they never open. There's no single glanceable view that answers ‘what changed and what needs my attention’ before the coffee's done."
+approach: "One live dashboard built around a Morning Briefing strip that reads like a sentence: revenue vs this time yesterday, products under par, support tickets aging past a day. Below it, KPIs with deltas and sparklines, charts, and red attention tables. A simulated event stream inserts orders and tickets every few seconds and the numbers visibly move — the whole thing is public and read-only, no login wall on the proof."
+outcome: "An honest, always-on demo: open it and watch live revenue, orders, low-stock alerts, and aging tickets update in real time. Anonymous visitors get a read-only view; no Supabase key ever reaches the browser, and the simulated volume is capped so the demo database never grows without bound."
+stack: [Next.js, TypeScript, Supabase, Tailwind CSS, Vercel]
+demoUrl: https://gabrielbrathwaite.org/projects/ops-dashboard
 repoUrl: null
-embed: screenshots
-gallery: []
+cardHref: /projects/ops-dashboard
+demoNote: Live, public, and read-only — seeded with a fictional roastery's data. A server-side ticker simulates incoming orders and tickets, so the numbers move while you watch. The browser only ever reads from one API route; no database key is exposed client-side.
+embed: iframe
+gallery:
+  - /projects/sample-dashboard/cover.png
 featured: false
 order: 4
 ---
 
-The second of two **placeholder projects**. Its `embed` is set to `iframe` and
-`demoUrl` points at this very site purely so the live-demo iframe mode is
-visible while building — swap in a real demo URL (or change `embed`) for a real
-project. See `CONTENT.md` for exactly how the live-demo block works.
+## What it answers in five seconds
+
+The dashboard opens on a **Morning Briefing** — three or four plain-English
+lines generated from the live data:
+
+- *Revenue is up 37% vs this time yesterday — $16,177 and climbing.*
+- *6 support tickets aging past 24h — oldest is "Bags arrived stale" (73h).*
+- *3 products below par — restock Nightshift and Benevolent.*
+
+That strip is the whole point: it answers *what changed* and *what needs me*
+before you've read a single chart. Everything below — KPIs with deltas and
+sparklines, a 14-day revenue line, orders by hour, top products, and red
+low-stock / aging-ticket tables — is the detail behind those headlines.
+
+## How it stays live
+
+Every few seconds the page polls one server route. That route advances a
+simulated event stream (a new order, occasionally a support ticket) and returns
+a freshly-computed snapshot, so the KPIs tick up and the briefing rewrites
+itself while you watch. The insert volume is debounced and capped with a rolling
+window, so the demo database can't grow forever.
+
+It's deliberately **read-only and public** — the real version of this gates
+behind auth, but the portfolio proof shouldn't. All Supabase access happens on
+the server with the publishable key under row-level security; the browser never
+touches a database credential.
