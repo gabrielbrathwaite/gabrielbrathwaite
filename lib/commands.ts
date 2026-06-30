@@ -34,7 +34,9 @@ export function getCommandItems(): CommandItem[] {
     label: p.title,
     group: "Projects",
     hint: p.tagline,
-    href: `/work/${p.slug}`,
+    // Respect cardHref (in-app demos like /projects/...) so the palette lands
+    // on the same destination as the project card, not the case-study page.
+    href: p.cardHref ?? `/work/${p.slug}`,
     keywords: p.tags.join(" "),
   }));
 

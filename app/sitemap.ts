@@ -26,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Standalone in-app experiences that live outside /work/[slug].
-  const appRoutes = ["/projects/inbox-to-crm"].map((path) => ({
+  const appRoutes = ["/projects/inbox-to-crm", "/projects/ops-dashboard"].map((path) => ({
     url: `${base}${path}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
